@@ -67,9 +67,13 @@ jobs:
           " -ForegroundColor Cyan
           
       - name: Start Avica Service
-        run: cmd /c show.bat
-        
+        run: |
+          # Run show.bat minimized
+          $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "show.bat" -WindowStyle Minimized -PassThru
+          Write-Host "✅ Avica service started (minimized)" -ForegroundColor Green
+          
       - name: Keep Session Active
         run: |
           Write-Host "🚀 Avica is starting... Look for CONNECTION ID below!" -ForegroundColor Yellow
-          cmd /c loop.bat
+          # Run loop.bat minimized
+          $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "loop.bat" -WindowStyle Minimized -PassThru
