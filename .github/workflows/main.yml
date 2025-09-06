@@ -31,46 +31,116 @@ jobs:
           # User password set karo
           net user runneradmin TheDisa1a
           
-          # Avica shuro karo
-          Write-Host "⚡ Avica shuro ho raha hai..." -ForegroundColor Yellow
-          python -c "import pyautogui as pag; pag.click(897, 64, duration=2)" 2>$null
-          Start-Process "Avica_setup.exe"
-          
-          # Setup script chalayo
-          python setup.py
-          
-          Write-Host "✅ Setup mukammal! GoFile link check karo!" -ForegroundColor Green
+          Write-Host "✅ Setup mukammal! Avica shuro hone wala hai..." -ForegroundColor Green
           
       - name: System User Setup Karo
         run: |
           net user runneradmin TheDisa1a
           Write-Host "✅ System user tayyar hai" -ForegroundColor Green
           
-      - name: CMD Minimized Mein Kholo
+      - name: CMD Ko Hidden Karne Ke Liye Script Banaye
         run: |
-          # CMD minimized mode mein kholo background mein
-          $scriptBlock = {
-            cmd.exe /c "echo ╔══════════════════════════════════════╗ && echo ║        AVICA RDP CONNECTION          ║ && echo ╚══════════════════════════════════════╝ && echo. && echo 📱 WhatsApp: +923091645255 && echo 👨‍💻 Created by HamzaEditz && echo Telegram: https://t.me/hamzaeditz2 && echo. && echo 📋 Instructions: && echo • GoFile link neeche ayega && echo • Wahan se Avica ID aur Password lo && echo • Avica app download karo aur connect karo && echo • GoFile link har bar badalta hai! && echo. && echo ⏳ GoFile link ka intezar... && timeout 86400"
-          }
+          # Hidden CMD ke liye special script banaye
+          $hiddenScript = @'
+          @echo off
+          powershell -WindowStyle Hidden -Command "
+          `$signature = '[DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);'
+          Add-Type -Name Win32 -MemberDefinition `$signature -Namespace NativeMethods
+          `$hwnd = (Get-Process -Id `$PID).MainWindowHandle
+          [NativeMethods.Win32]::ShowWindow(`$hwnd, 0)
+          "
+          echo ╔══════════════════════════════════════╗
+          echo ║        AVICA RDP CONNECTION          ║
+          echo ╚══════════════════════════════════════╝
+          echo.
+          echo 📱 WhatsApp: +923091645255
+          echo 👨‍💻 Created by HamzaEditz
+          echo Telegram: https://t.me/hamzaeditz2
+          echo.
+          echo 📋 Instructions:
+          echo • GoFile link neeche ayega
+          echo • Wahan se Avica ID aur Password lo
+          echo • Avica app download karo aur connect karo
+          echo • GoFile link har bar badalta hai!
+          echo.
+          echo ⏳ GoFile link ka intezar...
+          timeout 86400
+          '@
+          Set-Content -Path "hidden_cmd.bat" -Value $hiddenScript
           
-          # Hidden window style ke sath CMD shuro karo
+      - name: Hidden CMD Shuro Karo
+        run: |
+          # Hidden CMD shuro karo jo screenshot mein bhi nazar nahi ayega
           $processInfo = New-Object System.Diagnostics.ProcessStartInfo
           $processInfo.FileName = "cmd.exe"
-          $processInfo.Arguments = "/c echo Connection Info Displayed && timeout 5"
-          $processInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Minimized
+          $processInfo.Arguments = "/c hidden_cmd.bat"
+          $processInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+          $processInfo.CreateNoWindow = $true
           $process = [System.Diagnostics.Process]::Start($processInfo)
           
-          Write-Host "✅ CMD minimized mode mein chalu ho gaya" -ForegroundColor Green
+          Write-Host "✅ CMD completely hidden ho gaya (screenshot mein bhi nahi)" -ForegroundColor Green
           
-      - name: Avica Service Shuro Karo
+      - name: Avica Service Ko Bhi Hidden Karo
         run: |
-          # show.bat minimized chalayo
-          $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "show.bat" -WindowStyle Minimized -PassThru
-          Write-Host "✅ Avica service chalu ho gayi (minimized)" -ForegroundColor Green
+          # show.bat ko bhi hidden tareeqe se chalaye
+          $hiddenShowScript = @'
+          @echo off
+          powershell -WindowStyle Hidden -Command "
+          `$signature = '[DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);'
+          Add-Type -Name Win32 -MemberDefinition `$signature -Namespace NativeMethods
+          `$hwnd = (Get-Process -Id `$PID).MainWindowHandle
+          [NativeMethods.Win32]::ShowWindow(`$hwnd, 0)
+          "
+          show.bat
+          '@
+          Set-Content -Path "hidden_show.bat" -Value $hiddenShowScript
           
-      - name: Session Ko Active Rakho
+          $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+          $processInfo.FileName = "cmd.exe"
+          $processInfo.Arguments = "/c hidden_show.bat"
+          $processInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+          $processInfo.CreateNoWindow = $true
+          $process = [System.Diagnostics.Process]::Start($processInfo)
+          
+          Write-Host "✅ Avica service completely hidden ho gayi" -ForegroundColor Green
+          
+      - name: Session Ko Hidden Active Rakho
         run: |
           Write-Host "🚀 Avica shuro ho raha hai... CONNECTION ID talash karo!" -ForegroundColor Yellow
-          # loop.bat minimized chalayo
-          $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "loop.bat" -WindowStyle Minimized -PassThru
-          Write-Host "✅ Session active rakhi ja rahi hai (background mein)" -ForegroundColor Green
+          
+          # loop.bat ko bhi hidden tareeqe se chalaye
+          $hiddenLoopScript = @'
+          @echo off
+          powershell -WindowStyle Hidden -Command "
+          `$signature = '[DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);'
+          Add-Type -Name Win32 -MemberDefinition `$signature -Namespace NativeMethods
+          `$hwnd = (Get-Process -Id `$PID).MainWindowHandle
+          [NativeMethods.Win32]::ShowWindow(`$hwnd, 0)
+          "
+          loop.bat
+          '@
+          Set-Content -Path "hidden_loop.bat" -Value $hiddenLoopScript
+          
+          $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+          $processInfo.FileName = "cmd.exe"
+          $processInfo.Arguments = "/c hidden_loop.bat"
+          $processInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+          $processInfo.CreateNoWindow = $true
+          $process = [System.Diagnostics.Process]::Start($processInfo)
+          
+          Write-Host "✅ Session completely hidden active rakhi ja rahi hai" -ForegroundColor Green
+          
+      - name: Avica Ko Visible Shuro Karo (Screenshot Ke Liye)
+        run: |
+          Write-Host "⚡ Avica visible shuro ho raha hai (screenshot ke liye)..." -ForegroundColor Yellow
+          
+          # Avica ko normal tareeqe se shuro karo takay screenshot mein dikhay de
+          Start-Process "Avica_setup.exe" -WindowStyle Normal
+          
+          # Thora wait karo takay Avica properly load ho jaye
+          Start-Sleep -Seconds 10
+          
+          # Setup script chalayo (minimized)
+          $process = Start-Process "python" -ArgumentList "setup.py" -WindowStyle Minimized -PassThru
+          
+          Write-Host "✅ Avica visible shuro ho gaya (screenshot ke liye)" -ForegroundColor Green
